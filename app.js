@@ -2,8 +2,10 @@ const express = require("express")
 const passport = require('passport')
 const session = require('express-session')
 const userRoute = require('./routes/user.route')
+const communityRoute = require('./routes/community.route')
 require('./db.js').connectToMongoDB()
 require("./authentication/auth")
+require("./authentication/google")
 require("dotenv").config()
 
 
@@ -25,13 +27,17 @@ passport.serializeUser(function(user, done) { done(null, user) });
 passport.deserializeUser(function(user, done) { done(null, user) });
 
 
+app.get('/', (req, res)=>{
+    try{
+        res.status(200).send({message:"home page"})
+    }catch(error){
+        console.log(error)
+        res.status(400).send({message:"error loading home page"})
+    }
+  });
 
-app.get("/",(req,res)=>{
-    
-    res.send({message: "Welcome "})
-})
-
-app.use('/user', userRoute)
+app.use('/user', userRoute);
+app.use('/community', communityRoute)
 
 
 PORT = process.env.PORT
